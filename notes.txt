@@ -1,0 +1,168 @@
+Space bar is now for manual moves. But does anyone actually care about manual moves? Maybe they shouldn't exist. . .
+
+
+
+#Card Moving
+##Move Logic (Hit a CardList)
+###PrimaryMove
+Go through each card in the Stack (can be just one) until exhaust Movability, assign a priority. Move the highest priority.
+For each card in the Stack, check every CardList for possible moves.
+
+
+Priority Assignment Thoughts:
+Sequentially check priority of each CardList.
+
+King to Empty Column is 200
+Stack is 300 - 500
+stack of 1 will be 490
+stack of 2 will be 480
+etc
+Move to empty column is 600
+If single, Send home is 100
+If single, move to empty Freecell 1200
+if single, move to column is 1300
+
+
+
+
+NEW THOUGHT
+every possible target needs a card, and a priority.
+So that means I need to go through every card in a stack and assign it a priority for every column.
+The highest priority from that step overrides any lower prioritys.
+
+So I think I'll create a new class that holds a card and a priority. As I iterate through, I'll overrite lower priority/cards with higher priority/cards.
+
+The other awkward peice is that movability is different to empty columns.
+Round 1: go check everything up to Movability except for empty columns and assign a priority.
+Round 2: go check the card AT EMPTYCOLUMNMOVABILITY to empty columns and assign a priority.
+
+
+
+##SecondaryMove
+Change up the priority. . . .
+One case, maybe the only case, is if I want to move a card to another stack instead of home.
+
+
+##During a move
+Note: Need to make sure to update the Top of the cold column being moved from.
+
+##After Every Move
+- Update IsOrdered for each column involved.
+- Check for win condition
+- Auto home anything below home threshold.
+- After every Freecell related action, reorder the freecells to be in increasing order right to left (because rolling fingers is fun.) 
+- Calculate ToEmptyColumnMovability.
+- Calculate ToStackMovability
+
+#Movability
+(2^C) * (FC+1)
+Theory: Formula to move to a column is as if that column doesn't exist.
+1FC = 2
+1FC + 1C = 3
+1FC + 2C = 3
+
+2FC = 3
+2FC = 1C = 5
+
+3FC = 4
+3FC + 2 = at least 7
+
+4FC = 5
+
+
+
+1FC + 1C TC = 2
+2FC + 2C TC = 6
+3FC + 2 TC = 8 
+
+
+
+
+
+#Hotkeys!
+##Columns: asdfjkl
+When you hit a column, it will select the bottom card. While selected:
+- Hit space to auto move.
+- Hit column again followed by the destination for manual move. 
+- Holding a column hotkey selects all stacked. Hit a destination to move as many as possible there.
+
+##Freecells are qwer, Homes are uiop
+- Hit to select.
+- Space to auto move.
+- Hit free cell again followed by the destination for manual move.
+
+##z is undo. 
+
+##Need a hotkey for new game.
+
+##Esc
+- Deselect.
+
+##Home: h
+- Send home.
+
+##Special: v 
+###Special On Column
+- If there's stackable 867, and sufficient Movability, reorder.    
+- If a two is exposed and its ace is under it, send both home.
+- If there's an ace sandwiched between two stackables, auto home the ace.
+- If Ace is on the bottom and there's a single card on top and a freecell, auto home the ace.
+- If a nextToBeAutomaticallySentHome on the floor is covered by one card, and there's another floor open, auto home it.
+- Same thing if it's covered up by sequential cards that can be moved to another floor, or to another stack. For example, Ace on floor with king on top, King will get moved to another floor so Ace goes home. 
+###Special On Freecell
+- If there are sequential cards in freecells and I Special the lowest one, move it and its parents down.
+- If there's a homeable card mid stack, and I special its partner in a freecell, and there's enough Movability, send the mid stack one home, and put partner in the stack.
+###Nothing selected
+- Send all homable cards home.
+- If there's a King stack, move all possible to it.
+
+
+
+#Misc
+- Win condition: Only one unordered column remains.
+- Track data: might be cool to see the number of possible moves at any given step of the game either live of after.
+- Need an undo stack.
+
+
+
+
+
+#Old stuff
+If I have 5 6 7 up top and an 8 down below, if I click the 5 to move, it moves everything down automatically.
+If I right click to send a card home, if it's not next up to go home and the next up card is exposed, send them both home.
+If a black 3 in freecell is clicked, and a black 3 on column can go home, move it home and put freecell 3 on it's spot.
+I think I want the card's clickable footprint to be bigger than the card.
+If I try to send a card home and its parent can also be sent home, send them both.
+Maybe clicking anywhere on a stack moves all possible.
+
+
+##Left Click Logic
+- Left click on a stack sends card to free cell, right click sends card home.
+- Left click on a freecell send card to stack/floor. Right click sends home.
+
+
+#Right Click Logic
+
+
+#Graphical Stuff
+- MAYBE if I hover a card, highlight the possible targets
+- Highlight Aces, twos, Kings, Queens. Maybe highlight louder if aces/twos are deep or kings/queens are shallow.
+- Highlight groups of Aces, especially if they're shallow.
+- Highlight ordered cards so they're easy to identify.
+- Additional visual indicator if they're ordered and touching the mat.
+- Additional visual indicator if it's ordered on a King on the mat.
+- MAYBE As the game gets late, gently highlight columns that aren't ordered yet.  
+- Hold 1-10 to highlight those cards. ` for ace, - = 'backspace' for jack queen king.
+- As you approach win, I want exciting visual indicators. Warming up to the win. Make it obvious you're downhill to victory so you can start spamming. Maybe a hotkey to auto win after a point.
+- Possibly a hotkey to highlight different things. For example, hold shift to highlight all the lowest can highest cards right now.
+- Likewise, as you're about to lose or loseloop, make it clear. Maybe it gets darker to indicate you're stuck and can't win.
+- MAYBE hover over a card and highlight the other three
+- Maybe hover over a card and highlight all it's possible parents.
+- Always highlight homeable cards
+- If all cells are full and there's only a loop move possible (lose state), highlight the loop move. 
+- If an ace is home, I want it to be easy to know that while looking at the cards. Maybe a small icon on the cards, or highlight.
+- MAYBE If I hover a column, if the possibility exists to drill to the bottom, maybe highlight all the potential locations.
+- Maybe always highlight the next card for each home.
+- If I hover a column for a second, show how far I can drill down.
+- Maybe just always highlight all cards that can be moved.
+- If I have sequentials up in free cells, I want a mouse-hoverable place (maybe on the top card) that clearly indicates by highlighting all cards (they'll automatically be placed in free cells sequentially, by the way) that will go down together. Click that place makes them all go down together. Just save yourself 2 or 3 or 4 clicks, that's all.

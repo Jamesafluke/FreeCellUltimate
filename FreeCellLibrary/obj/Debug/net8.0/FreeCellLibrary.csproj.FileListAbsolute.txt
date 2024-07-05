@@ -1,0 +1,11 @@
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCellLibrary\obj\Debug\net8.0\FreeCellLibrary.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCellLibrary\obj\Debug\net8.0\FreeCellLibrary.AssemblyInfoInputs.cache
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCellLibrary\obj\Debug\net8.0\FreeCellLibrary.AssemblyInfo.cs
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCellLibrary\obj\Debug\net8.0\FreeCellLibrary.csproj.CoreCompileInputs.cache
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCellLibrary\bin\Debug\net8.0\FreeCellLibrary.deps.json
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCellLibrary\bin\Debug\net8.0\FreeCellLibrary.dll
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCellLibrary\bin\Debug\net8.0\FreeCellLibrary.pdb
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCellLibrary\obj\Debug\net8.0\FreeCellLibrary.dll
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCellLibrary\obj\Debug\net8.0\refint\FreeCellLibrary.dll
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCellLibrary\obj\Debug\net8.0\FreeCellLibrary.pdb
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCellLibrary\obj\Debug\net8.0\ref\FreeCellLibrary.dll

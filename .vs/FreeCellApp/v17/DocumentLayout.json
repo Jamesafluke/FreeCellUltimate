@@ -1,0 +1,164 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F40CD186-3837-4039-8086-416232CB9DEF}|FreeCellLibrary\\FreeCellLibrary.csproj|c:\\users\\jfluckiger\\source\\repos\\freecellapp\\freecelllibrary\\priority.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F40CD186-3837-4039-8086-416232CB9DEF}|FreeCellLibrary\\FreeCellLibrary.csproj|solutionrelative:freecelllibrary\\priority.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{010DFD2B-6806-40AF-80DC-445380EE0913}|FreeCell\\FreeCell.csproj|c:\\users\\jfluckiger\\source\\repos\\freecellapp\\freecell\\freecellform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{010DFD2B-6806-40AF-80DC-445380EE0913}|FreeCell\\FreeCell.csproj|solutionrelative:freecell\\freecellform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F40CD186-3837-4039-8086-416232CB9DEF}|FreeCellLibrary\\FreeCellLibrary.csproj|c:\\users\\jfluckiger\\source\\repos\\freecellapp\\freecelllibrary\\gameboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F40CD186-3837-4039-8086-416232CB9DEF}|FreeCellLibrary\\FreeCellLibrary.csproj|solutionrelative:freecelllibrary\\gameboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F40CD186-3837-4039-8086-416232CB9DEF}|FreeCellLibrary\\FreeCellLibrary.csproj|c:\\users\\jfluckiger\\source\\repos\\freecellapp\\freecelllibrary\\card.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F40CD186-3837-4039-8086-416232CB9DEF}|FreeCellLibrary\\FreeCellLibrary.csproj|solutionrelative:freecelllibrary\\card.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C289AA57-2374-4A56-8C07-E93077A286CF}|Solution Items{C289AA57-2374-4A56-8C07-E93077A286CF}|C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\notes.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{C289AA57-2374-4A56-8C07-E93077A286CF}|Solution Items{C289AA57-2374-4A56-8C07-E93077A286CF}|solutionrelative:notes.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{010DFD2B-6806-40AF-80DC-445380EE0913}|FreeCell\\FreeCell.csproj|c:\\users\\jfluckiger\\source\\repos\\freecellapp\\freecell\\freecell.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{010DFD2B-6806-40AF-80DC-445380EE0913}|FreeCell\\FreeCell.csproj|solutionrelative:freecell\\freecell.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F40CD186-3837-4039-8086-416232CB9DEF}|FreeCellLibrary\\FreeCellLibrary.csproj|c:\\users\\jfluckiger\\source\\repos\\freecellapp\\freecelllibrary\\freecelllibrary.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{F40CD186-3837-4039-8086-416232CB9DEF}|FreeCellLibrary\\FreeCellLibrary.csproj|solutionrelative:freecelllibrary\\freecelllibrary.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 1933,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Priority.cs",
+              "DocumentMoniker": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCellLibrary\\Priority.cs",
+              "RelativeDocumentMoniker": "FreeCellLibrary\\Priority.cs",
+              "ToolTip": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCellLibrary\\Priority.cs",
+              "RelativeToolTip": "FreeCellLibrary\\Priority.cs",
+              "ViewState": "AQIAAAIAAAAAAAAAAAAewBMAAAAPAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-05T17:27:36.194Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "GameBoard.cs",
+              "DocumentMoniker": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCellLibrary\\GameBoard.cs",
+              "RelativeDocumentMoniker": "FreeCellLibrary\\GameBoard.cs",
+              "ToolTip": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCellLibrary\\GameBoard.cs",
+              "RelativeToolTip": "FreeCellLibrary\\GameBoard.cs",
+              "ViewState": "AQIAADwBAAAAAAAAAAAuwEsBAAAmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-03T02:45:25.423Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "FreeCellForm.cs",
+              "DocumentMoniker": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCell\\FreeCellForm.cs",
+              "RelativeDocumentMoniker": "FreeCell\\FreeCellForm.cs",
+              "ToolTip": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCell\\FreeCellForm.cs",
+              "RelativeToolTip": "FreeCell\\FreeCellForm.cs",
+              "ViewState": "AQIAAHgAAAAAAAAAAAAmwIAAAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-02T20:44:07.549Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 1001,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "FreeCellLibrary",
+              "DocumentMoniker": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCellLibrary\\FreeCellLibrary.csproj",
+              "RelativeDocumentMoniker": "FreeCellLibrary\\FreeCellLibrary.csproj",
+              "ToolTip": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCellLibrary\\FreeCellLibrary.csproj",
+              "RelativeToolTip": "FreeCellLibrary\\FreeCellLibrary.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-07-05T16:52:53.659Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "FreeCell",
+              "DocumentMoniker": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCell\\FreeCell.csproj",
+              "RelativeDocumentMoniker": "FreeCell\\FreeCell.csproj",
+              "ToolTip": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCell\\FreeCell.csproj",
+              "RelativeToolTip": "FreeCell\\FreeCell.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-07-05T16:52:31.956Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Card.cs",
+              "DocumentMoniker": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCellLibrary\\Card.cs",
+              "RelativeDocumentMoniker": "FreeCellLibrary\\Card.cs",
+              "ToolTip": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCellLibrary\\Card.cs",
+              "RelativeToolTip": "FreeCellLibrary\\Card.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-05T02:26:17.265Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "FloatingWindowState": {
+        "Id": "a7b8c6bb-2201-4130-baa6-f7bfed423ba4",
+        "Display": 0,
+        "X": 473,
+        "Y": 101,
+        "Width": 1452,
+        "Height": 1037,
+        "WindowState": 0
+      },
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "notes.txt",
+              "DocumentMoniker": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\notes.txt",
+              "RelativeDocumentMoniker": "notes.txt",
+              "ToolTip": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\notes.txt",
+              "RelativeToolTip": "notes.txt",
+              "ViewState": "AQIAAEsAAAAAAAAAAAAAACUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2024-07-02T03:31:00.55Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

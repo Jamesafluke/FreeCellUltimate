@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34916.146
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreeCell", "FreeCell\FreeCell.csproj", "{010DFD2B-6806-40AF-80DC-445380EE0913}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FreeCellLibrary", "FreeCellLibrary\FreeCellLibrary.csproj", "{F40CD186-3837-4039-8086-416232CB9DEF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C289AA57-2374-4A56-8C07-E93077A286CF}"
+	ProjectSection(SolutionItems) = preProject
+		notes.txt = notes.txt
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{010DFD2B-6806-40AF-80DC-445380EE0913}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{010DFD2B-6806-40AF-80DC-445380EE0913}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{010DFD2B-6806-40AF-80DC-445380EE0913}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{010DFD2B-6806-40AF-80DC-445380EE0913}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F40CD186-3837-4039-8086-416232CB9DEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F40CD186-3837-4039-8086-416232CB9DEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F40CD186-3837-4039-8086-416232CB9DEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F40CD186-3837-4039-8086-416232CB9DEF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B6A40EA0-B431-4827-9CDC-C3B5880ECE5F}
+	EndGlobalSection
+EndGlobal
