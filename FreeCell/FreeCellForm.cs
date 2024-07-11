@@ -56,7 +56,6 @@ public partial class FreeCellForm : Form
             {
                 Card card = gameBoard.Freecells[i].Top;
                 DrawFreecell(freecellXPos, card);
-                gameBoard.numOfEmptyFreeCells++;
             }
             freecellXPos += freecellDistance;
         }
@@ -102,6 +101,7 @@ public partial class FreeCellForm : Form
 
     public void DrawColumn(int columnNumber, int xPos, int yPos, Card card)
     {
+        if(card is null){ return; }
         Bitmap image = (Bitmap)_resourceManager.GetObject(card.Name);
         PictureBox testBox = new PictureBox();
         testBox.Image = image;

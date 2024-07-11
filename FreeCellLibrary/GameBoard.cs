@@ -1,4 +1,5 @@
 ﻿using FreeCellLibrary;
+using System.Net.Security;
 using System.Runtime.InteropServices;
 
 namespace FreeCellLibrary;
@@ -8,15 +9,15 @@ public class GameBoard
     private Card[]? _cards;
     private readonly History _history;
     private Move _lastMove;
+    private int numOfEmptyFreeCells  = 0;
+    private int numOfEmptyColumns  = 0;
+    private int autoHomeThreshold = 2;
+    private int movability;
+    private int emptyColumnMovability;
 
     public Column[]? Columns { get; set; }
     public Freecell[]? Freecells { get; set; }
     public Home[]? Homes { get; set; }
-    public int Movability { get; set; }
-    public int EmptyColumnMovability { get; set; }
-    public int numOfEmptyFreeCells { get; set; } = 0;
-    public int numOfEmptyColumns { get; set; } = 0;
-    public int AutoHomeThreshold { get; set; } = 2;
     public bool GameIsWon { get; set; } = false;
     public int Seed { get; set; }
     
@@ -32,61 +33,68 @@ public class GameBoard
 
     private Card[]? CreateCards()
     {
-         return new Card[]
+         Card[] cards = new Card[]
          {
-            new Card("s1", null, null, null),
-            new Card("s2", "h3", "d3", "s1"),
-            new Card("s3", "h4", "d4", "s2"),
-            new Card("s4", "h5", "d5", "s3"),
-            new Card("s5", "h6", "d6", "s4"),
-            new Card("s6", "h7", "d7", "s5"),
-            new Card("s7", "h8", "d8", "s6"),
-            new Card("s8", "h9", "d9", "s7"),
-            new Card("s9", "h10", "d10", "s8"),
-            new Card("s10", "h11", "d11", "s9"),
-            new Card("s11", "h12", "d12", "s10"),
-            new Card("s12", "h13", "d13", "s11"),
-            new Card("s13", null, null, "s12"),
-            new Card("h1", null, null, null),
-            new Card("h2", "s3", "c3", "h1"),
-            new Card("h3", "s4", "c4", "h2"),
-            new Card("h4", "s5", "c5", "h3"),
-            new Card("h5", "s6", "c6", "h4"),
-            new Card("h6", "s7", "c7", "h5"),
-            new Card("h7", "s8", "c8", "h6"),
-            new Card("h8", "s9", "c9", "h7"),
-            new Card("h9", "s10", "c10", "h8"),
-            new Card("h10", "s11", "c11", "h9"),
-            new Card("h11", "s12", "c12", "h10"),
-            new Card("h12", "s13", "c13", "h11"),
-            new Card("h13", null, null, "h12"),
-            new Card("d1", null, null, null),
-            new Card("d2", "s3", "c3", "d1"),
-            new Card("d3", "s4", "c4", "d2"),
-            new Card("d4", "s5", "c5", "d3"),
-            new Card("d5", "s6", "c6", "d4"),
-            new Card("d6", "s7", "c7", "d5"),
-            new Card("d7", "s8", "c8", "d6"),
-            new Card("d8", "s9", "c9", "d7"),
-            new Card("d9", "s10", "c10", "d8"),
-            new Card("d10", "s11", "c11", "d9"),
-            new Card("d11", "s12", "c12", "d10"),
-            new Card("d12", "s13", "c13", "d11"),
-            new Card("d13", null, null, "d12"),
-            new Card("c1", null, null, null),
-            new Card("c2", "h3", "d3", "c1"),
-            new Card("c3", "h4", "d4", "c2"),
-            new Card("c4", "h5", "d5", "c3"),
-            new Card("c5", "h6", "d6", "c4"),
-            new Card("c6", "h7", "d7", "c5"),
-            new Card("c7", "h8", "d8", "c6"),
-            new Card("c8", "h9", "d9", "c7"),
-            new Card("c9", "h10", "d10", "c8"),
-            new Card("c10", "h11", "d11", "c9"),
-            new Card("c11", "h12", "d12", "c10"),
-            new Card("c12", "h13", "d13", "c11"),
-            new Card("c13", "null", "null", "c12"),
-        };
+            new Card("s1", null, null),
+            new Card("s2", "h3", "d3"),
+            new Card("s3", "h4", "d4"),
+            new Card("s4", "h5", "d5"),
+            new Card("s5", "h6", "d6"),
+            new Card("s6", "h7", "d7"),
+            new Card("s7", "h8", "d8"),
+            new Card("s8", "h9", "d9"),
+            new Card("s9", "h10", "d10"),
+            new Card("s10", "h11", "d11"),
+            new Card("s11", "h12", "d12"),
+            new Card("s12", "h13", "d13"),
+            new Card("s13", null, null),
+            new Card("h1", null, null),
+            new Card("h2", "s3", "c3"),
+            new Card("h3", "s4", "c4"),
+            new Card("h4", "s5", "c5"),
+            new Card("h5", "s6", "c6"),
+            new Card("h6", "s7", "c7"),
+            new Card("h7", "s8", "c8"),
+            new Card("h8", "s9", "c9"),
+            new Card("h9", "s10", "c10"),
+            new Card("h10", "s11", "c11"),
+            new Card("h11", "s12", "c12"),
+            new Card("h12", "s13", "c13"),
+            new Card("h13", null, null),
+            new Card("d1", null, null),
+            new Card("d2", "s3", "c3"),
+            new Card("d3", "s4", "c4"),
+            new Card("d4", "s5", "c5"),
+            new Card("d5", "s6", "c6"),
+            new Card("d6", "s7", "c7"),
+            new Card("d7", "s8", "c8"),
+            new Card("d8", "s9", "c9"),
+            new Card("d9", "s10", "c10"),
+            new Card("d10", "s11", "c11"),
+            new Card("d11", "s12", "c12"),
+            new Card("d12", "s13", "c13"),
+            new Card("d13", null, null),
+            new Card("c1", null, null),
+            new Card("c2", "h3", "d3"),
+            new Card("c3", "h4", "d4"),
+            new Card("c4", "h5", "d5"),
+            new Card("c5", "h6", "d6"),
+            new Card("c6", "h7", "d7"),
+            new Card("c7", "h8", "d8"),
+            new Card("c8", "h9", "d9"),
+            new Card("c9", "h10", "d10"),
+            new Card("c10", "h11", "d11"),
+            new Card("c11", "h12", "d12"),
+            new Card("c12", "h13", "d13"),
+            new Card("c13", "null", "null"),
+         };
+        foreach (var card in cards)
+        {
+            card.Suit = char.Parse(card.Name.Substring(0, 1));
+
+            card.Value = int.Parse(card.Name.Substring(1, card.Name.Length - 1));
+        }
+        return cards;
     }
     
     private Card[]? RandomizeCards(Card[]? cards)
@@ -173,6 +181,19 @@ public class GameBoard
 
         PostAction();
     }
+
+    public void PostAction(Move move = null)
+        {
+            CalculateIsOrdered();
+            CheckWinCondition();
+            numOfEmptyFreeCells = CalculateNumberOfEmptyFreecells();
+            movability = CalculateMovability();
+            emptyColumnMovability = CalulateEmptyColumnMovability();
+            autoHomeThreshold = CalculateAutoHomeThreshold(); 
+            if (move is not null) { _history.Moves.Push(move); }
+            AutoHomeStuff();
+        }
+
     public void MoveStarter(char source, bool primary = true)
     {
         if (primary) { _lastMove = PrimaryMove(source); }
@@ -199,7 +220,7 @@ public class GameBoard
         move.card = card;
         move.Source = cardList;
 
-        RemoveFromColumn(source, card);
+        RemoveFromCardList(source, card);
         card.Down = null;
 
         //FreeCells
@@ -210,8 +231,7 @@ public class GameBoard
         //Homes.
         else if (destination == 9)
         {
-            char suit = char.Parse(card.Name.Substring(0, 1));
-            switch (suit)
+            switch (card.Suit)
             {
                 case 's':
                     Homes[0].Add(card);
@@ -239,7 +259,6 @@ public class GameBoard
         }
 
         return move;
-
     }
 
     private Move SecondaryMove(char source)
@@ -247,7 +266,6 @@ public class GameBoard
         //TODO Write this sometime.
         return new Move();
     }
-
 
     private CardList AddToFreecells(Card card)
     {
@@ -262,43 +280,61 @@ public class GameBoard
         return null;
     }
 
-    private void RemoveFromColumn(char source, Card card)
+    private void RemoveFromCardList(char source, Card card)
     {
         switch (source)
         {
             case 'a':
-                if (card.Down is null) break;
-                Columns[0].Top = card.Down;
-                card.Down.Up = null;
+                Columns[0].Remove(Columns[0].Top);
                 break;
             case 's':
-                Columns[1].Top = card.Down;
-                card.Down.Up = null;
+                Columns[1].Remove(Columns[1].Top);
                 break;
             case 'd': 
-                Columns[2].Top = card.Down;
-                card.Down.Up = null;
+                Columns[2].Remove(Columns[2].Top);
                 break;
             case 'f':
-                Columns[3].Top = card.Down;
-                card.Down.Up = null;
+                Columns[3].Remove(Columns[3].Top);
                 break;
             case 'j':
-                Columns[4].Top = card.Down;
-                card.Down.Up = null;
+                Columns[4].Remove(Columns[4].Top);
                 break;
             case 'k':
-                Columns[5].Top = card.Down;
-                card.Down.Up = null;
+                Columns[5].Remove(Columns[5].Top);
                 break;
             case 'l':
-                Columns[6].Top = card.Down;
-                card.Down.Up = null;
+                Columns[6].Remove(Columns[6].Top);
                 break;
             case ';':
-                Columns[7].Top = card.Down;
-                card.Down.Up = null;
+                Columns[7].Remove(Columns[7].Top);
                 break;
+
+            case 'q':
+                Freecells[0].Remove(Freecells[0].Top);
+                break;
+            case 'w':
+                Freecells[1].Remove(Freecells[1].Top);
+                break;
+            case 'e':
+                Freecells[2].Remove(Freecells[2].Top);
+                break;
+            case 'r':
+                Freecells[3].Remove(Freecells[3].Top);
+                break;
+
+            case 'u':
+                Homes[0].Remove(Homes[0].Top);
+                break;
+            case 'i': 
+                Homes[1].Remove(Homes[2].Top);
+                break;
+            case 'o':
+                Homes[2].Remove(Homes[2].Top);
+                break;
+            case 'p':
+                Homes[3].Remove(Homes[3].Top);
+                break;
+
             default:
                 return;
         }
@@ -387,11 +423,11 @@ public class GameBoard
 
         }
         
-        if(int.Parse(card.Name.Substring(1,card.Name.Length - 1)) == 1){
+        if(card.Value == 1)
+        {
             priority[(int)Priority.DestinationIndex.Home].Value = 100;
             priority[(int)Priority.DestinationIndex.Home].Card = card;
             priority[(int)Priority.DestinationIndex.Home].Destination = Priority.DestinationIndex.Home;
-
         }
         else if (IsHomeable(card))
         {
@@ -403,11 +439,11 @@ public class GameBoard
         //Stack moves.
         //Prioritize the non-emptycolumn Movability stack moves
         Card tempCard = card;
-        for (int cardIndex = 0; cardIndex < Movability; cardIndex++)
+        for (int cardIndex = 0; cardIndex < movability; cardIndex++)
         {
             for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
             {
-                if (IsStackable(tempCard, Columns[i].Top)){
+                if (IsStackable(tempCard, Columns[i].Top) && Columns[i].Top is not null){
                     int tempPriority = 500 - 10 * Columns[i].Top.StackSize;
                     if (priority[i].Value > tempPriority)
                     {
@@ -418,7 +454,10 @@ public class GameBoard
                 }
             }
             //Progress to next card in the stack if it exists.
-            if (tempCard.IsStacked) { tempCard = tempCard.Down; }
+            if (tempCard.IsStacked)
+            {
+                tempCard = tempCard.Down;
+            }
             else { break; }
         }
 
@@ -426,7 +465,7 @@ public class GameBoard
         tempCard = card;
         if (numOfEmptyColumns > 0)
         {
-            for (int cardIndex = 0; cardIndex > EmptyColumnMovability; cardIndex++)
+            for (int cardIndex = 0; cardIndex > emptyColumnMovability; cardIndex++)
             {
                 for (int i = 0; i < 8; i++)
                 {
@@ -474,20 +513,15 @@ public class GameBoard
         return ((int)highest.Destination, highest.Card);
     }
 
-    public void PostAction(Move move = null)
+    
+    private int CalculateNumberOfEmptyFreecells()
     {
-        numOfEmptyFreeCells = 4;
-        for (int i = 0; i < 4; i++)
+        int numberOfEmptyFreecells = 0;
+        for (int i = 0; i < GlobalConfig.NumberOfFreecells; i++)
         {
-            if (Freecells[i].Top is not null) { numOfEmptyFreeCells++; }
+            if (Freecells[i].Top is null) { numberOfEmptyFreecells++; }
         }
-
-        CalculateIsOrdered();
-        CheckWinCondition();
-        CalculateMovability(); //TODO return the values instead.
-        CalculateAutoHomeThreshold(); //TODO return the value instead
-        if (move is not null) { _history.Moves.Push(move); }
-        AutoHomeStuff();
+        return numberOfEmptyFreecells;
     }
 
     private void CheckWinCondition()
@@ -526,114 +560,105 @@ public class GameBoard
         else { return false; }
     }
 
-    public void CalculateMovability()
+    private int CalculateMovability()
     {
-        Movability = (1 + numOfEmptyFreeCells) * (int)(Math.Pow(2, numOfEmptyColumns));
-        EmptyColumnMovability = (1 + numOfEmptyFreeCells) * (int)(Math.Pow(2, (numOfEmptyColumns - 1)));
+        return (1 + numOfEmptyFreeCells) * (int)(Math.Pow(2, numOfEmptyColumns));
+    }
+    private int CalulateEmptyColumnMovability()
+    {
+        return (1 + numOfEmptyFreeCells) * (int)(Math.Pow(2, (numOfEmptyColumns - 1)));
     }
 
     private void AutoHomeStuff()
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < GlobalConfig.NumberOfFreecells; i++)
         {
             if (Freecells[i].Top is null) { break; }
-            int number = int.Parse(Freecells[i].Top.Name.Substring(1, Freecells[i].Top.Name.Length - 1));
-            if(number >= AutoHomeThreshold)
+            int value = Freecells[i].Top.Value;
+            if (value == 1 || value >= autoHomeThreshold)
             {
-                switch (number)
-                {
-                    case 0:
-                    PrimaryMove('q');
-                        break;
-                    case 1:
-                    PrimaryMove('w');
-                        break;
-                    case 2:
-                    PrimaryMove('e');
-                        break;
-                    case 3:
-                    PrimaryMove('r');
-                        break;
-                }
+                SendHome(Freecells[i]);
             }
         }
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
         {
-            int number = int.Parse(Columns[i].Top.Name.Substring(1, Columns[i].Top.Name.Length - 1));
-            if (number <= AutoHomeThreshold)
+            if (Columns[i].Top is null) { break; }
+            int value = Columns[i].Top.Value;
+            if (value == 1 || value == autoHomeThreshold)
             {
-                switch (i)
-                {
-                    case 0:
-                        PrimaryMove('a');
-                        break;
-                    case 1:
-                        PrimaryMove('s');
-                        break;
-                    case 2:
-                        PrimaryMove('d');
-                        break;
-                    case 3:
-                        PrimaryMove('f');
-                        break;
-                    case 4:
-                        PrimaryMove('j');
-                        break;
-                    case 5:
-                        PrimaryMove('k');
-                        break;
-                    case 6:
-                        PrimaryMove('l');
-                        break;
-                    case 7:
-                        PrimaryMove(';');
-                        break;
-                }
+                SendHome(Columns[i]);
             }
         }
     }
 
-    private void CalculateAutoHomeThreshold()
+    private void SendHome(CardList cardList)
     {
-        AutoHomeThreshold = 0;
-        for (int i = 0; i < 4; i++)
+        if (!IsHomeable(cardList.Top))
+        {
+            return;
+        }
+        switch (cardList.Top.Suit)
+        {
+            case 's':
+                Homes[0].Add(cardList.Top);
+                cardList.Remove(cardList.Top);
+                break;
+            case 'h':
+                Homes[1].Add(cardList.Top);
+                cardList.Remove(cardList.Top);
+                break;
+            case 'd':
+                Homes[2].Add(cardList.Top);
+                cardList.Remove(cardList.Top);
+                break;
+            case 'c':
+                Homes[3].Add(cardList.Top);
+                cardList.Remove(cardList.Top);
+                break;
+        }
+    }
+
+    private int CalculateAutoHomeThreshold()
+    {
+        int autoHomeThreshold = 13;
+        for (int i = 0; i < GlobalConfig.NumberOfHomes; i++)
         {
             if (Homes[i].Top is null)
             {
-                AutoHomeThreshold = 1;
+                autoHomeThreshold = 2;
             }
             else
             {
-                int numberOnCard = int.Parse(Homes[i].Top.Name.Substring(1, Homes[i].Top.Name.Length - 1));
-                if (numberOnCard > AutoHomeThreshold)
+                int value = Homes[i].Top.Value;
+                if (value < autoHomeThreshold)
                 {
-                    AutoHomeThreshold = numberOnCard;
+                    autoHomeThreshold = value;
                 }
             }
         }
+        return autoHomeThreshold;
     }
 
     private bool IsHomeable(Card? card)
     {
-        char suit = char.Parse(card.Name.Substring(0, 1));
-        switch (suit)
+        switch (card.Suit)
         {
             case 's':
                 if (Homes[0].Bottom is null) { return false; }
-                if(card.Homable == Homes[0].Bottom.Name) { return true; }
+                if (card.Value == Homes[0].Top.Value + 1) return true;
                 break;
             case 'h':
                 if (Homes[1].Bottom is null) { return false; }
-                if(card.Homable == Homes[1].Bottom.Name) { return true; }
+                if (card.Value == Homes[1].Top.Value + 1) return true;
                 break;
             case 'd':
                 if (Homes[2].Bottom is null) { return false; }
-                if(card.Homable == Homes[2].Bottom.Name) { return true; }
+                if (card.Value == Homes[2].Top.Value + 1) return true;
                 break;
             case 'c':
                 if (Homes[3].Bottom is null) { return false; }
-                if(card.Homable == Homes[3].Bottom.Name) { return true; }
+                if (card.Value == Homes[3].Top.Value + 1) return true;
                 break;
         }
         return false;
@@ -641,6 +666,7 @@ public class GameBoard
 
     private bool IsStackable(Card? card, Card? ToStackOn)
     {
+        if(ToStackOn is null) { return true; }
         if (ToStackOn.Name == card.CanStackOn1 || ToStackOn.Name == card.CanStackOn2) { return true; }
         return false;
     }

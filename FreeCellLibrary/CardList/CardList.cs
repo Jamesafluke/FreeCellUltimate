@@ -38,6 +38,7 @@ public abstract class CardList
             card.Down.Up = null;
             this.Top = card.Down;
             card.Down = null;
+            card.IsStacked = false;
         }
     }
     public Card PeekTop()
