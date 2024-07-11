@@ -1,5 +1,6 @@
 
 using FreeCellLibrary;
+using System.Reflection;
 using System.Resources;
 
 namespace FreeCell;
@@ -23,25 +24,21 @@ public partial class FreeCellForm : Form
 
     ResourceManager _resourceManager = Properties.Resources.ResourceManager;
     public GameBoard gameBoard { get; set; }
+    public History history { get; set; }
     public FreeCellForm()
     {
         InitializeComponent();
-        gameBoard = new GameBoard();
+        history = new History();
+        gameBoard = new GameBoard(history);
 
-        int xPos = columnX;
-        for (int i = 0; i < 8; i++)
-        {
-            Card card = gameBoard.Columns[i].PeekBottom();
-            DrawColumn(i, xPos, columnY, card);
-            xPos += columnHorizontalDistance;
-        }
+        this.Text = $"Free Cell Ultimate {gameBoard.Seed}";
 
-
-        gameBoard.PostAction();
+        DrawBoard();
     }
 
     public void DrawBoard()
     {
+        backgroundPictureBox.BringToFront();
         //Columns
         int xPos = columnX;
         for (int i = 0; i < 8; i++)
@@ -74,6 +71,7 @@ public partial class FreeCellForm : Form
             }
             homeXPos += homeDistance;
         }
+        gameBoard.PostAction();
     }
 
     private void DrawHome(int xPos, Card? card)
@@ -126,70 +124,54 @@ public partial class FreeCellForm : Form
         switch (e.KeyChar)
         {
             case 'q':
-                gameBoard.PrimaryMove('q');
-                DrawBoard();
+                gameBoard.MoveStarter('q');
                 break;
             case 'w':
-                gameBoard.PrimaryMove('w');
-                DrawBoard();
+                gameBoard.MoveStarter('w');
                 break;
             case 'e':
-                gameBoard.PrimaryMove('e');
-                DrawBoard();
+                gameBoard.MoveStarter('e');
                 break;
             case 'r':
-                gameBoard.PrimaryMove('r');
-                DrawBoard();
+                gameBoard.MoveStarter('r');
                 break;
 
             case 'u':
-                gameBoard.PrimaryMove('u');
-                DrawBoard();
+                gameBoard.MoveStarter('u');
                 break;
             case 'i':
-                gameBoard.PrimaryMove('i');
-                DrawBoard();
+                gameBoard.MoveStarter('i');
                 break;
             case 'o':
-                gameBoard.PrimaryMove('o');
-                DrawBoard();
+                gameBoard.MoveStarter('o');
                 break;
             case 'p':
-                gameBoard.PrimaryMove('p');
-                DrawBoard();
-
+                gameBoard.MoveStarter('p');
                 break;
+
             case 'a':
-                gameBoard.PrimaryMove('a');
-                DrawBoard();
+                gameBoard.MoveStarter('a');
                 break;
             case 's':
-                gameBoard.PrimaryMove('s');
-                DrawBoard();
+                gameBoard.MoveStarter('s');
                 break;
             case 'd':
-                gameBoard.PrimaryMove('d');
-                DrawBoard();
+                gameBoard.MoveStarter('d');
                 break;
             case 'f':
-                gameBoard.PrimaryMove('f');
-                DrawBoard();
+                gameBoard.MoveStarter('f');
                 break;
             case 'j':
-                gameBoard.PrimaryMove('j');
-                DrawBoard();
+                gameBoard.MoveStarter('j');
                 break;
             case 'k':
-                gameBoard.PrimaryMove('k');
-                DrawBoard();
+                gameBoard.MoveStarter('k');
                 break;
             case 'l':
-                gameBoard.PrimaryMove('l');
-                DrawBoard();
+                gameBoard.MoveStarter('l');
                 break;
             case ';':
-                gameBoard.PrimaryMove(';');
-                DrawBoard();
+                gameBoard.MoveStarter(';');
 
                 break;
             case 'g':
@@ -197,12 +179,13 @@ public partial class FreeCellForm : Form
             case 'h':
                 break;
             case 'z':
+                gameBoard.Undo();
                 break;
             case 'x':
                 break;
 
-        } 
-
+        }
+        DrawBoard();
     }
 
     private void FreeCellForm_KeyDown(object sender, KeyEventArgs e)

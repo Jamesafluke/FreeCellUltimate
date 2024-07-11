@@ -1,10 +1,14 @@
-﻿using FreeCellLibrary.CardList;
+﻿using FreeCellLibrary;
+using System.Runtime.InteropServices;
 
 namespace FreeCellLibrary;
 public class GameBoard
 {
 
     private Card[]? _cards;
+    private readonly History _history;
+    private Move _lastMove;
+
     public Column[]? Columns { get; set; }
     public Freecell[]? Freecells { get; set; }
     public Home[]? Homes { get; set; }
@@ -12,15 +16,18 @@ public class GameBoard
     public int EmptyColumnMovability { get; set; }
     public int numOfEmptyFreeCells { get; set; } = 0;
     public int numOfEmptyColumns { get; set; } = 0;
-    public int AutoHomeThreshold { get; set; } = 0;
+    public int AutoHomeThreshold { get; set; } = 2;
     public bool GameIsWon { get; set; } = false;
-    public GameBoard()
+    public int Seed { get; set; }
+    
+    public GameBoard(History history)
     {
         _cards = CreateCards();
         _cards = RandomizeCards(_cards);
         PopulateColumns(_cards);
         PopulateFreecells();
         PopulateHomes();
+        _history = history;
     }
 
     private Card[]? CreateCards()
@@ -84,9 +91,13 @@ public class GameBoard
     
     private Card[]? RandomizeCards(Card[]? cards)
     {
-        for (int i = 0; i < cards.Length; i++) { int random = Random.Shared.Next(cards.Length); var temp = cards[i];
-            cards[i] = cards[random];
-            cards[random] = temp;
+        //Seed = Random.Shared.Next(6767766);
+        Seed = 6767766;
+
+        Random random = new Random(Seed);
+        for (int i = 0; i < cards.Length; i++) { int randomInt = random.Next(cards.Length); var temp = cards[i];
+            cards[i] = cards[randomInt];
+            cards[randomInt] = temp;
         }
         return cards;
     }
@@ -154,59 +165,101 @@ public class GameBoard
     }
 
 
-    public void CalculateMovability()
+    public void Undo()
     {
-        Movability = (1 + numOfEmptyFreeCells) * (int)(Math.Pow(2, numOfEmptyColumns));
-        EmptyColumnMovability = (1 + numOfEmptyFreeCells) * (int)(Math.Pow(2, (numOfEmptyColumns - 1)));
+        Move lastMove = _history.Moves.Pop();
+        lastMove.Destination.Remove(lastMove.card);
+        lastMove.Source.Add(lastMove.card);
+
+        PostAction();
+    }
+    public void MoveStarter(char source, bool primary = true)
+    {
+        if (primary) { _lastMove = PrimaryMove(source); }
+        else { _lastMove = SecondaryMove(source); }
+
+        PostAction(_lastMove);
     }
 
-    public void PrimaryMove(char source)
+    public Move PrimaryMove(char source)
     {
-        Card? card = GetTopCard(source);
-        if(card is null) { return; }
+        CardList cardList = GetCardList(source);
+        Card? card = cardList.Top;
+        Move move = new Move();
 
         var destinationData = Prioritize(card);
-
         int? destination = destinationData.Item1;
         card = destinationData.Item2;
 
-        //No possible move.
-        if(card is null) { return; }
+        //No possible move after prioritizing.
+        //COME BACK AND TEST THIS SOON.
+        if (card is null) { return null; }
 
+        
+        move.card = card;
+        move.Source = cardList;
 
         RemoveFromColumn(source, card);
         card.Down = null;
 
-        switch (destination)
+        //FreeCells
+        if(destination == 8)
         {
-            case 8: //Freecell.
-                Freecells[3].Add(card);
-                return;
-
-            case 9: //Home.
-                char suit = char.Parse(card.Name.Substring(0, 1));
-                switch (suit)
-                {
-                    case 's':
-                        Homes[0].Add(card);
-                        break;
-                    case 'h':
-                        Homes[1].Add(card);
-                        break;
-                    case 'd':
-                        Homes[2].Add(card);
-                        break;
-                    case 'c':
-                        Homes[3].Add(card);
-                        break;
-                }
-                return;
-
-            case 0-7:
-                Columns[(int)destination].Add(card);
-                return;
+            move.Destination = AddToFreecells(card);
         }
-        PostAction();
+        //Homes.
+        else if (destination == 9)
+        {
+            char suit = char.Parse(card.Name.Substring(0, 1));
+            switch (suit)
+            {
+                case 's':
+                    Homes[0].Add(card);
+                    move.Destination = Homes[0];
+                    break;
+                case 'h':
+                    Homes[1].Add(card);
+                    move.Destination = Homes[1];
+                    break;
+                case 'd':
+                    Homes[2].Add(card);
+                    move.Destination = Homes[2];
+                    break;
+                case 'c':
+                    Homes[3].Add(card);
+                    move.Destination = Homes[3];
+                    break;
+            }
+        }
+        //Columns
+        else if (destination >= 0 && destination < 8)
+        {
+            Columns[(int)destination].Add(card);
+            move.Destination = Columns[(int)destination];
+        }
+
+        return move;
+
+    }
+
+    private Move SecondaryMove(char source)
+    {
+        //TODO Write this sometime.
+        return new Move();
+    }
+
+
+    private CardList AddToFreecells(Card card)
+    {
+        for (int i = 0; i < GlobalConfig.NumberOfFreecells; i++)
+        {
+            if (Freecells[i].Top is null)
+            {
+                Freecells[i].Top = card;
+                return Freecells[i];
+            }
+        }
+        return null;
     }
 
     private void RemoveFromColumn(char source, Card card)
@@ -214,6 +267,7 @@ public class GameBoard
         switch (source)
         {
             case 'a':
+                if (card.Down is null) break;
                 Columns[0].Top = card.Down;
                 card.Down.Up = null;
                 break;
@@ -250,64 +304,64 @@ public class GameBoard
         }
     }
 
-    private Card? GetTopCard(char source)
+    private CardList GetCardList(char source)
     {
         switch (source)
         {
             case 'q':
                 if (Freecells[0] is null) { return null; }
-                return Freecells[0].Top;
+                return Freecells[0];
             case 'w':
                 if (Freecells[1] is null) { return null; }
-                return Freecells[1].Top;
+                return Freecells[1];
             case 'e':
                 if (Freecells[2] is null) { return null; }
-                return Freecells[2].Top;
+                return Freecells[2];
             case 'r':
                 if (Freecells[3] is null) { return null; }
-                return Freecells[3].Top;
+                return Freecells[3];
 
             case 'u':
                 if (Homes[0] is null) { return null; }
-                return Homes[0].Top;
+                return Homes[0];
             case 'i':
                 if (Homes[1] is null) { return null; }
-                return Homes[1].Top;
+                return Homes[1];
             case 'o':
                 if (Homes[2] is null) { return null; }
-                return Homes[2].Top;
+                return Homes[2];
             case 'p':
                 if (Homes[3] is null) { return null; }
-                return Homes[3].Top;
+                return Homes[3];
 
             case 'a':
                 if (Columns[0] is null) { return null; }
-                return Columns[0].Top;
+                return Columns[0];
             case 's':
                 if (Columns[1] is null) { return null; }
-                return Columns[1].Top;
+                return Columns[1];
             case 'd':
                 if (Columns[2] is null) { return null; }
-                return Columns[2].Top;
+                return Columns[2];
             case 'f':
                 if (Columns[3] is null) { return null; }
-                return Columns[3].Top;
+                return Columns[3];
             case 'j':
                 if (Columns[4] is null) { return null; }
-                return Columns[4].Top;
+                return Columns[4];
             case 'k':
                 if (Columns[5] is null) { return null; }
-                return Columns[5].Top;
+                return Columns[5];
             case 'l':
                 if (Columns[6] is null) { return null; }
-                return Columns[6].Top;
+                return Columns[6];
             case ';':
                 if (Columns[7] is null) { return null; }
-                return Columns[7].Top;
+                return Columns[7];
         }
         return null;
     }
-
+    
     private (int?, Card?) Prioritize(Card? card)
     {
         Priority[] priority = new Priority[]
@@ -325,46 +379,51 @@ public class GameBoard
         };
 
         //Prioritize Freecell and Home (for singles).
-        if (card is not null && !card.IsStacked && numOfEmptyFreeCells > 0)
+        if (card is not null && numOfEmptyFreeCells > 0)
         {
-            priority[8].Value = 1200;
-            priority[8].Card = card;
-            priority[8].Destination = 8;
+            priority[(int)Priority.DestinationIndex.Freecell].Value = 1200;
+            priority[(int)Priority.DestinationIndex.Freecell].Card = card;
+            priority[(int)Priority.DestinationIndex.Freecell].Destination = Priority.DestinationIndex.Freecell;
 
         }
         
         if(int.Parse(card.Name.Substring(1,card.Name.Length - 1)) == 1){
-            priority[9].Value = 100;
-            priority[9].Card = card;
-            priority[9].Destination = 9;
+            priority[(int)Priority.DestinationIndex.Home].Value = 100;
+            priority[(int)Priority.DestinationIndex.Home].Card = card;
+            priority[(int)Priority.DestinationIndex.Home].Destination = Priority.DestinationIndex.Home;
 
         }
         else if (IsHomeable(card))
         {
-            priority[9].Value = 100;
-            priority[9].Card = card;
-            priority[9].Destination = 9;
+            priority[(int)Priority.DestinationIndex.Home].Value = 100;
+            priority[(int)Priority.DestinationIndex.Home].Card = card;
+            priority[(int)Priority.DestinationIndex.Home].Destination = Priority.DestinationIndex.Home;
         }
 
         //Stack moves.
         //Prioritize the non-emptycolumn Movability stack moves
+        Card tempCard = card;
         for (int cardIndex = 0; cardIndex < Movability; cardIndex++)
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
             {
-                if (IsStackable(card, Columns[i].Top)){
+                if (IsStackable(tempCard, Columns[i].Top)){
                     int tempPriority = 500 - 10 * Columns[i].Top.StackSize;
                     if (priority[i].Value > tempPriority)
                     {
                         priority[i].Value = tempPriority;
-                        priority[i].Card = card;
-                        priority[i].Destination = i;
+                        priority[i].Card = tempCard;
+                        priority[i].Destination = (Priority.DestinationIndex)i;
                     }
                 }
             }
+            //Progress to next card in the stack if it exists.
+            if (tempCard.IsStacked) { tempCard = tempCard.Down; }
+            else { break; }
         }
 
         //Prioritize the to-emptycolumn Movability stack moves
+        tempCard = card;
         if (numOfEmptyColumns > 0)
         {
             for (int cardIndex = 0; cardIndex > EmptyColumnMovability; cardIndex++)
@@ -373,6 +432,7 @@ public class GameBoard
                 {
                     if (Columns[i].Bottom is null)
                     {
+                        //King to column case.
                         if(int.Parse(card.Name.Substring(1,card.Name.Length)) == 13)
                         {
                             int kingPriority = 200;
@@ -380,9 +440,10 @@ public class GameBoard
                             {
                                 priority[i].Value = kingPriority;
                                 priority[i].Card = card;
-                                priority[i].Destination = i;
+                                priority[i].Destination = (Priority.DestinationIndex)i;
                             }
                         }
+                        //Non-king to column case.
                         else
                         {
                             int tempPriority = 600;
@@ -390,7 +451,7 @@ public class GameBoard
                             {
                                 priority[i].Value = tempPriority;
                                 priority[i].Card = card;
-                                priority[i].Destination = i;
+                                priority[i].Destination = (Priority.DestinationIndex)i;
                             } 
                         }
                     }
@@ -406,14 +467,14 @@ public class GameBoard
             if (priority[i].Value < highest.Value)
             {
                 highest.Value = priority[i].Value;
-                highest.Destination = i;
+                highest.Destination = (Priority.DestinationIndex)i;
                 highest.Card = priority[i].Card;
             }
         }
-        return (highest.Destination, highest.Card);
+        return ((int)highest.Destination, highest.Card);
     }
 
-    public void PostAction()
+    public void PostAction(Move move = null)
     {
         numOfEmptyFreeCells = 4;
         for (int i = 0; i < 4; i++)
@@ -425,8 +486,8 @@ public class GameBoard
         CheckWinCondition();
         CalculateMovability(); //TODO return the values instead.
         CalculateAutoHomeThreshold(); //TODO return the value instead
+        if (move is not null) { _history.Moves.Push(move); }
         AutoHomeStuff();
-        //Draw board.
     }
 
     private void CheckWinCondition()
@@ -463,6 +524,12 @@ public class GameBoard
             return IsOrdered(card.Down);
         }
         else { return false; }
+    }
+
+    public void CalculateMovability()
+    {
+        Movability = (1 + numOfEmptyFreeCells) * (int)(Math.Pow(2, numOfEmptyColumns));
+        EmptyColumnMovability = (1 + numOfEmptyFreeCells) * (int)(Math.Pow(2, (numOfEmptyColumns - 1)));
     }
 
     private void AutoHomeStuff()

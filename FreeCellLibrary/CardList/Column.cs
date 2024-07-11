@@ -1,4 +1,4 @@
-﻿namespace FreeCellLibrary.CardList;
+﻿namespace FreeCellLibrary;
 public class Column : CardList
 {
     public CardList? Cards { get; set; } = null;

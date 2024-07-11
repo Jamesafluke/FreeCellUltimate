@@ -3,6 +3,9 @@ C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\bin\Debug\net8.0-windows\F
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\bin\Debug\net8.0-windows\FreeCell.runtimeconfig.json
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\bin\Debug\net8.0-windows\FreeCell.dll
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\bin\Debug\net8.0-windows\FreeCell.pdb
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\bin\Debug\net8.0-windows\FreeCellLibrary.dll
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\bin\Debug\net8.0-windows\FreeCellLibrary.pdb
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.csproj.AssemblyReference.cache
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.FreeCellForm.resources
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.Properties.Resources.resources
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.csproj.GenerateResource.cache
@@ -10,12 +13,10 @@ C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\F
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.AssemblyInfoInputs.cache
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.AssemblyInfo.cs
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.csproj.CoreCompileInputs.cache
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.sourcelink.json
+C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.csproj.Up2Date
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.dll
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\refint\FreeCell.dll
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.pdb
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.genruntimeconfig.cache
 C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\ref\FreeCell.dll
-C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.csproj.AssemblyReference.cache
-C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\bin\Debug\net8.0-windows\FreeCellLibrary.dll
-C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\bin\Debug\net8.0-windows\FreeCellLibrary.pdb
-C:\Users\jfluckiger\source\repos\FreeCellApp\FreeCell\obj\Debug\net8.0-windows\FreeCell.csproj.Up2Date

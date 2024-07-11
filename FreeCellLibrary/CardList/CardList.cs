@@ -1,5 +1,5 @@
 ﻿
-namespace FreeCellLibrary.CardList;
+namespace FreeCellLibrary;
 public abstract class CardList
 {
     public bool IsEmpty { get; set; }
@@ -25,10 +25,21 @@ public abstract class CardList
             }
         }
     }
-    //public Card Remove(string cardName)
-    //{
-
-    //}
+    public void Remove(Card card)
+    {
+        if(card.Down is null)
+        {
+            this.Top = null;
+            this.Bottom = null;
+            card.Down = null;
+        }
+        else
+        {
+            card.Down.Up = null;
+            this.Top = card.Down;
+            card.Down = null;
+        }
+    }
     public Card PeekTop()
     {
         return Top;

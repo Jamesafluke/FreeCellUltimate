@@ -12,7 +12,6 @@ public class Card
     public string? CanStackOn1 { get; set; }
     public string? CanStackOn2 { get; set; }
     public string? Homable { get; set; }
-    //public System.Drawing.Bitmap Image { get; set; }
     public Card(string name, string? stackable1, string? stackable2, string? homable)
     {
         Name = name;
