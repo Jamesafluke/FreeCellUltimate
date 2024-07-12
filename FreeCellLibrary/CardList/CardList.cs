@@ -1,4 +1,5 @@
 ﻿
+
 namespace FreeCellLibrary;
 public abstract class CardList
 {
@@ -17,7 +18,10 @@ public abstract class CardList
         {
             card.Down = Top;
             card.Down.Up = card;
-            Top = card;
+            //Assign new top.
+            Top = AssignTop(card);
+
+
             if(IsStackable(card, card.Down))
             {
                 card.IsStacked = true;
@@ -25,6 +29,13 @@ public abstract class CardList
             }
         }
     }
+
+    private Card AssignTop(Card card)
+    {
+        if(card.Up is null) { return card; }
+        return AssignTop(card.Up);
+    }
+
     public void Remove(Card card)
     {
         if(card.Down is null)

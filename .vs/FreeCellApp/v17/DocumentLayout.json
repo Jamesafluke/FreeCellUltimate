@@ -7,6 +7,10 @@
       "RelativeMoniker": "D:0:0:{F40CD186-3837-4039-8086-416232CB9DEF}|FreeCellLibrary\\FreeCellLibrary.csproj|solutionrelative:freecelllibrary\\gameboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{F40CD186-3837-4039-8086-416232CB9DEF}|FreeCellLibrary\\FreeCellLibrary.csproj|c:\\users\\jfluckiger\\source\\repos\\freecellapp\\freecelllibrary\\cardlist\\cardlist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F40CD186-3837-4039-8086-416232CB9DEF}|FreeCellLibrary\\FreeCellLibrary.csproj|solutionrelative:freecelllibrary\\cardlist\\cardlist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{010DFD2B-6806-40AF-80DC-445380EE0913}|FreeCell\\FreeCell.csproj|c:\\users\\jfluckiger\\source\\repos\\freecellapp\\freecell\\freecellform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{010DFD2B-6806-40AF-80DC-445380EE0913}|FreeCell\\FreeCell.csproj|solutionrelative:freecell\\freecellform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -18,8 +22,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1001,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CardList.cs",
+              "DocumentMoniker": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCellLibrary\\CardList\\CardList.cs",
+              "RelativeDocumentMoniker": "FreeCellLibrary\\CardList\\CardList.cs",
+              "ToolTip": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCellLibrary\\CardList\\CardList.cs",
+              "RelativeToolTip": "FreeCellLibrary\\CardList\\CardList.cs",
+              "ViewState": "AQIAAA0AAAAAAAAAAAAqwB8AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-12T16:55:13.864Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -28,20 +45,20 @@
               "RelativeDocumentMoniker": "FreeCellLibrary\\GameBoard.cs",
               "ToolTip": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCellLibrary\\GameBoard.cs",
               "RelativeToolTip": "FreeCellLibrary\\GameBoard.cs",
-              "ViewState": "AQIAAHYBAAAAAAAAAAAowIsBAAAyAAAA",
+              "ViewState": "AQIAANgAAAAAAAAAAAAQwCIBAAAEAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-11T03:05:24.343Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "FreeCellForm.cs",
               "DocumentMoniker": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCell\\FreeCellForm.cs",
               "RelativeDocumentMoniker": "FreeCell\\FreeCellForm.cs",
               "ToolTip": "C:\\Users\\jfluckiger\\source\\repos\\FreeCellApp\\FreeCell\\FreeCellForm.cs",
               "RelativeToolTip": "FreeCell\\FreeCellForm.cs",
-              "ViewState": "AQIAABoAAAAAAAAAAAAxwN0AAAAUAAAA",
+              "ViewState": "AQIAABkAAAAAAAAAAAA1wN0AAAAUAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-10T19:40:05.112Z",
               "EditorCaption": ""

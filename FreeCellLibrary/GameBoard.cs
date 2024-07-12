@@ -11,7 +11,8 @@ public class GameBoard
     private Move _lastMove;
     private int numberOfEmptyFreeCells  = 0;
     private int numberOfEmptyColumns  = 0;
-    private int autoHomeThreshold = 2;
+    private int redAutoHomeThreshold = 2;
+    private int blackAutoHomeThreshold = 2;
     private int movability;
     private int emptyColumnMovability;
 
@@ -194,7 +195,8 @@ public class GameBoard
         numberOfEmptyColumns = CalculateNumberOfEmptyColumns();
         movability = CalculateMovability();
         emptyColumnMovability = CalulateEmptyColumnMovability();
-        autoHomeThreshold = CalculateAutoHomeThreshold(); 
+        redAutoHomeThreshold = CalculateAutoHomeThreshold("red"); 
+        blackAutoHomeThreshold = CalculateAutoHomeThreshold("black"); 
         if (move is not null) { _history.Moves.Push(move); }
         bool sentSomethingHome = AutoHomeStuff();
         if (sentSomethingHome) { PostAction(); }
@@ -310,8 +312,9 @@ public class GameBoard
             priority[(int)Priority.DestinationIndex.Freecell].Destination = Priority.DestinationIndex.Freecell;
 
         }
-        
-        if(card.Value == 1)
+
+        //I think this is obselete because of AutoHome functionality.
+        if (card.Value == 1)
         {
             priority[(int)Priority.DestinationIndex.Home].Value = 100;
             priority[(int)Priority.DestinationIndex.Home].Card = card;
@@ -329,7 +332,7 @@ public class GameBoard
         Card tempCard = card;
         for (int cardIndex = 0; cardIndex < movability; cardIndex++)
         {
-            for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
+            for (int i = 0; i < Columns.Length; i++)
             {
                 if (IsStackable(tempCard, Columns[i].Top) && Columns[i].Top is not null){
                     int tempPriority = 500 - 10 * Columns[i].Top.StackSize;
@@ -405,22 +408,32 @@ public class GameBoard
     private bool AutoHomeStuff()
     {
         bool sentSomethingHome = false;
-        for (int i = 0; i < GlobalConfig.NumberOfFreecells; i++)
+        for (int i = 0; i < Freecells.Length; i++)
         {
-            if (Freecells[i].Top is null) { break; }
-            int value = Freecells[i].Top.Value;
-            if (value == 1 || value <= autoHomeThreshold)
+            Card card = Freecells[i].Top;
+            if (card is null) { break; }
+
+            int autoHomeThreshold = redAutoHomeThreshold;
+            if(card.Suit == 's' || card.Suit == 'c') { autoHomeThreshold = blackAutoHomeThreshold; }
+            
+            int value = card.Value;
+            if (value <= autoHomeThreshold && IsHomeable(card))
             {
                 SendHome(Freecells[i]);
                 sentSomethingHome = true;
             }
         }
 
-        for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
+        for (int i = 0; i < Columns.Length; i++)
         {
-            if (Columns[i].Top is null) { break; }
-            int value = Columns[i].Top.Value;
-            if (value == 1 || value <= autoHomeThreshold)
+            Card card = Columns[i].Top;
+            if (card is null) { break; }
+
+            int autoHomeThreshold = redAutoHomeThreshold;
+            if(card.Suit == 's' || card.Suit == 'c') { autoHomeThreshold = blackAutoHomeThreshold; }
+
+            int value = card.Value;
+            if ((value == 1 || value <= autoHomeThreshold) && IsHomeable(card))
             {
                 SendHome(Columns[i]);
                 sentSomethingHome = true;
@@ -430,6 +443,57 @@ public class GameBoard
     }
 
 
+    private bool IsHomeable(Card? card)
+    {
+        //Aces.
+        if (card.Value == 1) return true;
+
+        switch (card.Suit)
+        {
+            case 's':
+                if (Homes[0].Bottom is null) { return false; }
+                if (card.Value == Homes[0].Top.Value + 1) return true;
+                break;
+            case 'h':
+                if (Homes[1].Bottom is null) { return false; }
+                if (card.Value == Homes[1].Top.Value + 1) return true;
+                break;
+            case 'd':
+                if (Homes[2].Bottom is null) { return false; }
+                if (card.Value == Homes[2].Top.Value + 1) return true;
+                break;
+            case 'c':
+                if (Homes[3].Bottom is null) { return false; }
+                if (card.Value == Homes[3].Top.Value + 1) return true;
+                break;
+        }
+        return false;
+    }
+
+    private void SendHome(CardList cardList)
+    {
+        Card card = cardList.Top;
+        switch (card.Suit)
+        {
+            case 's':
+                cardList.Remove(card);
+                Homes[0].Add(card);
+                break;
+            case 'h':
+                cardList.Remove(card);
+                Homes[1].Add(card);
+                break;
+            case 'd':
+                cardList.Remove(card);
+                Homes[2].Add(card);
+                break;
+            case 'c':
+                cardList.Remove(card);
+                Homes[3].Add(card);
+                break;
+        }
+
+    }
 
 
     private int CalculateNumberOfEmptyFreecells()
@@ -620,81 +684,39 @@ public class GameBoard
 
 
 
-    private void SendHome(CardList cardList)
-    {
-        Card card = cardList.Top;
-        //if (!IsHomeable(card))
-        //{
-        //    return;
-        //}
-        switch (card.Suit)
-        {
-            case 's':
-                cardList.Remove(card);
-                Homes[0].Add(card);
-                break;
-            case 'h':
-                cardList.Remove(card);
-                Homes[1].Add(card);
-                break;
-            case 'd':
-                cardList.Remove(card);
-                Homes[2].Add(card);
-                break;
-            case 'c':
-                cardList.Remove(card);
-                Homes[3].Add(card);
-                break;
-        }
-
-    }
-
-    private int CalculateAutoHomeThreshold()
+    private int CalculateAutoHomeThreshold(string suit)
     {
         int autoHomeThreshold = 13;
-        for (int i = 0; i < GlobalConfig.NumberOfHomes; i++)
-        {
-            if (Homes[i].Top is null)
-            {
-                autoHomeThreshold = 2;
-            }
-            else
-            {
-                int value = Homes[i].Top.Value;
-                if (value < autoHomeThreshold)
-                {
-                    autoHomeThreshold = value;
-                }
-            }
-        }
-        if (autoHomeThreshold == 1) return 2;
-        return autoHomeThreshold;
-    }
+        int[] values = new int[2];
 
-    private bool IsHomeable(Card? card)
-    {
-        if (card.Value == 1) return true;
-        switch (card.Suit)
-        {
-            case 's':
-                if (Homes[0].Bottom is null) { return false; }
-                if (card.Value == Homes[0].Top.Value + 1) return true;
-                break;
-            case 'h':
+        int column1;
+        int column2;
+        if(suit == "red") { column1 = 0; column2 = 3; }
+        else { column1 = 1; column2 = 2; }
 
-                if (Homes[1].Bottom is null) { return false; }
-                if (card.Value == Homes[1].Top.Value + 1) return true;
-                break;
-            case 'd':
-                if (Homes[2].Bottom is null) { return false; }
-                if (card.Value == Homes[2].Top.Value + 1) return true;
-                break;
-            case 'c':
-                if (Homes[3].Bottom is null) { return false; }
-                if (card.Value == Homes[3].Top.Value + 1) return true;
-                break;
+        int value1 = 0;
+        int value2= 0;
+        
+        if (Homes[column1].Top is not null)
+        {
+            value1 = Homes[column1].Top.Value;
         }
-        return false;
+        if (Homes[column2].Top is not null)
+        {
+            value2 = Homes[column2].Top.Value;
+        }
+
+        int lowestCardValue = 13;
+        if (value1 < value2)
+        {
+            lowestCardValue = value1;
+        }
+        else
+        {
+            lowestCardValue = value2;
+        }
+
+        return lowestCardValue + 2;
     }
 
     private bool IsStackable(Card? card, Card? ToStackOn)
