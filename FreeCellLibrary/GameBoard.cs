@@ -9,8 +9,8 @@ public class GameBoard
     private Card[]? _cards;
     private readonly History _history;
     private Move _lastMove;
-    private int numOfEmptyFreeCells  = 0;
-    private int numOfEmptyColumns  = 0;
+    private int numberOfEmptyFreeCells  = 0;
+    private int numberOfEmptyColumns  = 0;
     private int autoHomeThreshold = 2;
     private int movability;
     private int emptyColumnMovability;
@@ -100,7 +100,7 @@ public class GameBoard
     private Card[]? RandomizeCards(Card[]? cards)
     {
         //Seed = Random.Shared.Next(6767766);
-        Seed = 6767766;
+        Seed = 3789932;
 
         Random random = new Random(Seed);
         for (int i = 0; i < cards.Length; i++) { int randomInt = random.Next(cards.Length); var temp = cards[i];
@@ -175,6 +175,10 @@ public class GameBoard
 
     public void Undo()
     {
+        if(_history.Moves.Count == 0)
+        {
+            return;
+        }
         Move lastMove = _history.Moves.Pop();
         lastMove.Destination.Remove(lastMove.card);
         lastMove.Source.Add(lastMove.card);
@@ -183,16 +187,31 @@ public class GameBoard
     }
 
     public void PostAction(Move move = null)
+    {
+        CalculateIsOrdered();
+        CheckWinCondition();
+        numberOfEmptyFreeCells = CalculateNumberOfEmptyFreecells();
+        numberOfEmptyColumns = CalculateNumberOfEmptyColumns();
+        movability = CalculateMovability();
+        emptyColumnMovability = CalulateEmptyColumnMovability();
+        autoHomeThreshold = CalculateAutoHomeThreshold(); 
+        if (move is not null) { _history.Moves.Push(move); }
+        bool sentSomethingHome = AutoHomeStuff();
+        if (sentSomethingHome) { PostAction(); }
+    }
+
+    private int CalculateNumberOfEmptyColumns()
+    {
+        int number = 0;
+        for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
         {
-            CalculateIsOrdered();
-            CheckWinCondition();
-            numOfEmptyFreeCells = CalculateNumberOfEmptyFreecells();
-            movability = CalculateMovability();
-            emptyColumnMovability = CalulateEmptyColumnMovability();
-            autoHomeThreshold = CalculateAutoHomeThreshold(); 
-            if (move is not null) { _history.Moves.Push(move); }
-            AutoHomeStuff();
+            if (Columns[i].Top == null)
+            {
+                number++;
+            }
         }
+        return number;
+    }
 
     public void MoveStarter(char source, bool primary = true)
     {
@@ -208,13 +227,12 @@ public class GameBoard
         Card? card = cardList.Top;
         Move move = new Move();
 
+        if (card is null) { return null; }
+
         var destinationData = Prioritize(card);
         int? destination = destinationData.Item1;
         card = destinationData.Item2;
 
-        //No possible move after prioritizing.
-        //COME BACK AND TEST THIS SOON.
-        if (card is null) { return null; }
 
         
         move.card = card;
@@ -267,6 +285,162 @@ public class GameBoard
         return new Move();
     }
 
+    private (int?, Card?) Prioritize(Card? card)
+    {
+
+        Priority[] priority = new Priority[]
+        {
+            new Priority() {Value = 10000},
+            new Priority() {Value = 10000},
+            new Priority() {Value = 10000},
+            new Priority() {Value = 10000},
+            new Priority() {Value = 10000},
+            new Priority() {Value = 10000},
+            new Priority() {Value = 10000},
+            new Priority() {Value = 10000},
+            new Priority() {Value = 10000},
+            new Priority() {Value = 10000},
+        };
+
+        //Prioritize Freecell and Home (for singles).
+        if (card is not null && numberOfEmptyFreeCells > 0)
+        {
+            priority[(int)Priority.DestinationIndex.Freecell].Value = 1200;
+            priority[(int)Priority.DestinationIndex.Freecell].Card = card;
+            priority[(int)Priority.DestinationIndex.Freecell].Destination = Priority.DestinationIndex.Freecell;
+
+        }
+        
+        if(card.Value == 1)
+        {
+            priority[(int)Priority.DestinationIndex.Home].Value = 100;
+            priority[(int)Priority.DestinationIndex.Home].Card = card;
+            priority[(int)Priority.DestinationIndex.Home].Destination = Priority.DestinationIndex.Home;
+        }
+        else if (IsHomeable(card))
+        {
+            priority[(int)Priority.DestinationIndex.Home].Value = 100;
+            priority[(int)Priority.DestinationIndex.Home].Card = card;
+            priority[(int)Priority.DestinationIndex.Home].Destination = Priority.DestinationIndex.Home;
+        }
+
+        //Stack moves.
+        //Prioritize the non-emptycolumn Movability stack moves
+        Card tempCard = card;
+        for (int cardIndex = 0; cardIndex < movability; cardIndex++)
+        {
+            for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
+            {
+                if (IsStackable(tempCard, Columns[i].Top) && Columns[i].Top is not null){
+                    int tempPriority = 500 - 10 * Columns[i].Top.StackSize;
+                    if (priority[i].Value > tempPriority)
+                    {
+                        priority[i].Value = tempPriority;
+                        priority[i].Card = tempCard;
+                        priority[i].Destination = (Priority.DestinationIndex)i;
+                    }
+                }
+            }
+            //Progress to next card in the stack if it exists.
+            if (tempCard.IsStacked)
+            {
+                tempCard = tempCard.Down;
+            }
+            else { break; }
+        }
+
+        //Prioritize the to-emptycolumn Movability stack moves
+        tempCard = card;
+        if (numberOfEmptyColumns > 0)
+        {
+            for (int cardIndex = 0; cardIndex < emptyColumnMovability; cardIndex++)
+            {
+                for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
+                {
+                    if (Columns[i].Bottom is null)
+                    {
+                        //King to column case.
+                        if (card.Value == 13)
+                        {
+                            int kingPriority = 200;
+                            if (priority[i].Value > kingPriority)
+                            {
+                                priority[i].Value = kingPriority;
+                                priority[i].Card = card;
+                                priority[i].Destination = (Priority.DestinationIndex)i;
+                            }
+                        }
+                        //Non-king to column case.
+                        else
+                        {
+                            int tempPriority = 600;
+                            if (priority[i].Value > tempPriority)
+                            {
+                                priority[i].Value = tempPriority;
+                                priority[i].Card = card;
+                                priority[i].Destination = (Priority.DestinationIndex)i;
+                            } 
+                        }
+                    }
+                }
+            }
+        }
+
+        //Return the highest priority.
+        Priority highest = new Priority();
+        highest.Value = 10000;
+        for (int i = 0; i < priority.Length; i++)
+        {
+            if (priority[i].Value < highest.Value)
+            {
+                highest.Value = priority[i].Value;
+                highest.Destination = (Priority.DestinationIndex)i;
+                highest.Card = priority[i].Card;
+            }
+        }
+        return ((int)highest.Destination, highest.Card);
+    }
+
+
+    private bool AutoHomeStuff()
+    {
+        bool sentSomethingHome = false;
+        for (int i = 0; i < GlobalConfig.NumberOfFreecells; i++)
+        {
+            if (Freecells[i].Top is null) { break; }
+            int value = Freecells[i].Top.Value;
+            if (value == 1 || value <= autoHomeThreshold)
+            {
+                SendHome(Freecells[i]);
+                sentSomethingHome = true;
+            }
+        }
+
+        for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
+        {
+            if (Columns[i].Top is null) { break; }
+            int value = Columns[i].Top.Value;
+            if (value == 1 || value <= autoHomeThreshold)
+            {
+                SendHome(Columns[i]);
+                sentSomethingHome = true;
+            }
+        }
+        return sentSomethingHome;
+    }
+
+
+
+
+    private int CalculateNumberOfEmptyFreecells()
+    {
+        int numberOfEmptyFreecells = 0;
+        for (int i = 0; i < GlobalConfig.NumberOfFreecells; i++)
+        {
+            if (Freecells[i].Top is null) { numberOfEmptyFreecells++; }
+        }
+        return numberOfEmptyFreecells;
+    }
     private CardList AddToFreecells(Card card)
     {
         for (int i = 0; i < GlobalConfig.NumberOfFreecells; i++)
@@ -285,28 +459,28 @@ public class GameBoard
         switch (source)
         {
             case 'a':
-                Columns[0].Remove(Columns[0].Top);
+                Columns[0].Remove(card);
                 break;
             case 's':
-                Columns[1].Remove(Columns[1].Top);
+                Columns[1].Remove(card);
                 break;
-            case 'd': 
-                Columns[2].Remove(Columns[2].Top);
+            case 'd':
+                Columns[2].Remove(card);
                 break;
             case 'f':
-                Columns[3].Remove(Columns[3].Top);
+                Columns[3].Remove(card);
                 break;
             case 'j':
-                Columns[4].Remove(Columns[4].Top);
+                Columns[4].Remove(card);
                 break;
             case 'k':
-                Columns[5].Remove(Columns[5].Top);
+                Columns[5].Remove(card);
                 break;
             case 'l':
-                Columns[6].Remove(Columns[6].Top);
+                Columns[6].Remove(card);
                 break;
             case ';':
-                Columns[7].Remove(Columns[7].Top);
+                Columns[7].Remove(card);
                 break;
 
             case 'q':
@@ -325,7 +499,7 @@ public class GameBoard
             case 'u':
                 Homes[0].Remove(Homes[0].Top);
                 break;
-            case 'i': 
+            case 'i':
                 Homes[1].Remove(Homes[2].Top);
                 break;
             case 'o':
@@ -397,132 +571,6 @@ public class GameBoard
         }
         return null;
     }
-    
-    private (int?, Card?) Prioritize(Card? card)
-    {
-        Priority[] priority = new Priority[]
-        {
-            new Priority() {Value = 10000},
-            new Priority() {Value = 10000},
-            new Priority() {Value = 10000},
-            new Priority() {Value = 10000},
-            new Priority() {Value = 10000},
-            new Priority() {Value = 10000},
-            new Priority() {Value = 10000},
-            new Priority() {Value = 10000},
-            new Priority() {Value = 10000},
-            new Priority() {Value = 10000},
-        };
-
-        //Prioritize Freecell and Home (for singles).
-        if (card is not null && numOfEmptyFreeCells > 0)
-        {
-            priority[(int)Priority.DestinationIndex.Freecell].Value = 1200;
-            priority[(int)Priority.DestinationIndex.Freecell].Card = card;
-            priority[(int)Priority.DestinationIndex.Freecell].Destination = Priority.DestinationIndex.Freecell;
-
-        }
-        
-        if(card.Value == 1)
-        {
-            priority[(int)Priority.DestinationIndex.Home].Value = 100;
-            priority[(int)Priority.DestinationIndex.Home].Card = card;
-            priority[(int)Priority.DestinationIndex.Home].Destination = Priority.DestinationIndex.Home;
-        }
-        else if (IsHomeable(card))
-        {
-            priority[(int)Priority.DestinationIndex.Home].Value = 100;
-            priority[(int)Priority.DestinationIndex.Home].Card = card;
-            priority[(int)Priority.DestinationIndex.Home].Destination = Priority.DestinationIndex.Home;
-        }
-
-        //Stack moves.
-        //Prioritize the non-emptycolumn Movability stack moves
-        Card tempCard = card;
-        for (int cardIndex = 0; cardIndex < movability; cardIndex++)
-        {
-            for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
-            {
-                if (IsStackable(tempCard, Columns[i].Top) && Columns[i].Top is not null){
-                    int tempPriority = 500 - 10 * Columns[i].Top.StackSize;
-                    if (priority[i].Value > tempPriority)
-                    {
-                        priority[i].Value = tempPriority;
-                        priority[i].Card = tempCard;
-                        priority[i].Destination = (Priority.DestinationIndex)i;
-                    }
-                }
-            }
-            //Progress to next card in the stack if it exists.
-            if (tempCard.IsStacked)
-            {
-                tempCard = tempCard.Down;
-            }
-            else { break; }
-        }
-
-        //Prioritize the to-emptycolumn Movability stack moves
-        tempCard = card;
-        if (numOfEmptyColumns > 0)
-        {
-            for (int cardIndex = 0; cardIndex > emptyColumnMovability; cardIndex++)
-            {
-                for (int i = 0; i < 8; i++)
-                {
-                    if (Columns[i].Bottom is null)
-                    {
-                        //King to column case.
-                        if(int.Parse(card.Name.Substring(1,card.Name.Length)) == 13)
-                        {
-                            int kingPriority = 200;
-                            if (priority[i].Value <kingPriority)
-                            {
-                                priority[i].Value = kingPriority;
-                                priority[i].Card = card;
-                                priority[i].Destination = (Priority.DestinationIndex)i;
-                            }
-                        }
-                        //Non-king to column case.
-                        else
-                        {
-                            int tempPriority = 600;
-                            if (priority[i].Value < tempPriority)
-                            {
-                                priority[i].Value = tempPriority;
-                                priority[i].Card = card;
-                                priority[i].Destination = (Priority.DestinationIndex)i;
-                            } 
-                        }
-                    }
-                }
-            }
-        }
-
-        //Return the highest priority.
-        Priority highest = new Priority();
-        highest.Value = 10000;
-        for (int i = 0; i < priority.Length; i++)
-        {
-            if (priority[i].Value < highest.Value)
-            {
-                highest.Value = priority[i].Value;
-                highest.Destination = (Priority.DestinationIndex)i;
-                highest.Card = priority[i].Card;
-            }
-        }
-        return ((int)highest.Destination, highest.Card);
-    }
-
-    
-    private int CalculateNumberOfEmptyFreecells()
-    {
-        int numberOfEmptyFreecells = 0;
-        for (int i = 0; i < GlobalConfig.NumberOfFreecells; i++)
-        {
-            if (Freecells[i].Top is null) { numberOfEmptyFreecells++; }
-        }
-        return numberOfEmptyFreecells;
-    }
 
     private void CheckWinCondition()
     {
@@ -562,61 +610,43 @@ public class GameBoard
 
     private int CalculateMovability()
     {
-        return (1 + numOfEmptyFreeCells) * (int)(Math.Pow(2, numOfEmptyColumns));
+        return (1 + numberOfEmptyFreeCells) * (int)(Math.Pow(2, numberOfEmptyColumns));
     }
+
     private int CalulateEmptyColumnMovability()
     {
-        return (1 + numOfEmptyFreeCells) * (int)(Math.Pow(2, (numOfEmptyColumns - 1)));
+        return (1 + numberOfEmptyFreeCells) * (int)(Math.Pow(2, (numberOfEmptyColumns - 1)));
     }
 
-    private void AutoHomeStuff()
-    {
-        for (int i = 0; i < GlobalConfig.NumberOfFreecells; i++)
-        {
-            if (Freecells[i].Top is null) { break; }
-            int value = Freecells[i].Top.Value;
-            if (value == 1 || value >= autoHomeThreshold)
-            {
-                SendHome(Freecells[i]);
-            }
-        }
 
-        for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
-        {
-            if (Columns[i].Top is null) { break; }
-            int value = Columns[i].Top.Value;
-            if (value == 1 || value == autoHomeThreshold)
-            {
-                SendHome(Columns[i]);
-            }
-        }
-    }
 
     private void SendHome(CardList cardList)
     {
-        if (!IsHomeable(cardList.Top))
-        {
-            return;
-        }
-        switch (cardList.Top.Suit)
+        Card card = cardList.Top;
+        //if (!IsHomeable(card))
+        //{
+        //    return;
+        //}
+        switch (card.Suit)
         {
             case 's':
-                Homes[0].Add(cardList.Top);
-                cardList.Remove(cardList.Top);
+                cardList.Remove(card);
+                Homes[0].Add(card);
                 break;
             case 'h':
-                Homes[1].Add(cardList.Top);
-                cardList.Remove(cardList.Top);
+                cardList.Remove(card);
+                Homes[1].Add(card);
                 break;
             case 'd':
-                Homes[2].Add(cardList.Top);
-                cardList.Remove(cardList.Top);
+                cardList.Remove(card);
+                Homes[2].Add(card);
                 break;
             case 'c':
-                Homes[3].Add(cardList.Top);
-                cardList.Remove(cardList.Top);
+                cardList.Remove(card);
+                Homes[3].Add(card);
                 break;
         }
+
     }
 
     private int CalculateAutoHomeThreshold()
@@ -637,11 +667,13 @@ public class GameBoard
                 }
             }
         }
+        if (autoHomeThreshold == 1) return 2;
         return autoHomeThreshold;
     }
 
     private bool IsHomeable(Card? card)
     {
+        if (card.Value == 1) return true;
         switch (card.Suit)
         {
             case 's':
@@ -649,6 +681,7 @@ public class GameBoard
                 if (card.Value == Homes[0].Top.Value + 1) return true;
                 break;
             case 'h':
+
                 if (Homes[1].Bottom is null) { return false; }
                 if (card.Value == Homes[1].Top.Value + 1) return true;
                 break;

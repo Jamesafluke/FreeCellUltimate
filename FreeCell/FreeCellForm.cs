@@ -33,7 +33,45 @@ public partial class FreeCellForm : Form
 
         this.Text = $"Free Cell Ultimate {gameBoard.Seed}";
 
+        CheckForAces();
         DrawBoard();
+    }
+
+    private void CheckForAces()
+    {
+        for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
+        {
+            if (gameBoard.Columns[i].Top.Value == 1)
+            {
+                switch (i)
+                {
+                    case 0:
+                        gameBoard.MoveStarter('a');
+                        break;
+                    case 1:
+                        gameBoard.MoveStarter('s');
+                        break;
+                    case 2:
+                        gameBoard.MoveStarter('d');
+                        break;
+                    case 3:
+                        gameBoard.MoveStarter('f');
+                        break;
+                    case 4:
+                        gameBoard.MoveStarter('j');
+                        break;
+                    case 5:
+                        gameBoard.MoveStarter('k');
+                        break;
+                    case 6:
+                        gameBoard.MoveStarter('l');
+                        break;
+                    case 7:
+                        gameBoard.MoveStarter(';');
+                        break;
+                }
+            }
+        }
     }
 
     public void DrawBoard()
@@ -41,7 +79,7 @@ public partial class FreeCellForm : Form
         backgroundPictureBox.BringToFront();
         //Columns
         int xPos = columnX;
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < GlobalConfig.NumberOfColumns; i++)
         {
             Card card = gameBoard.Columns[i].PeekBottom();
             DrawColumn(i, xPos, columnY, card);
@@ -186,6 +224,7 @@ public partial class FreeCellForm : Form
 
         }
         DrawBoard();
+        if (gameBoard.GameIsWon) { MessageBox.Show("You win!"); }
     }
 
     private void FreeCellForm_KeyDown(object sender, KeyEventArgs e)

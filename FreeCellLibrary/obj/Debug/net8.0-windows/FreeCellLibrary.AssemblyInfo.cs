@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FreeCellLibrary")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8390fc789fe557cdf09bb082383c7bdeaca214a0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+34770915c5483c73c428ec67028239cf8b2eb4ab")]
 [assembly: System.Reflection.AssemblyProductAttribute("FreeCellLibrary")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FreeCellLibrary")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
